@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Phone OS UI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0a0a0a]">
+
+    <div class="phone-frame">
+        <div class="phone-screen" id="homeScreen">
+            <!-- Notch -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[160px] h-[30px] bg-black rounded-b-[20px] z-[150] flex items-center justify-center">
+                <div class="w-12 h-1 bg-white/10 rounded-full"></div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div id="clock">12:41</div>
+                <div class="flex gap-1.5 items-center">
+                    <i data-lucide="signal" size="14"></i>
+                    <i data-lucide="wifi" size="14"></i>
+                    <i data-lucide="battery" size="14"></i>
+                </div>
+            </div>
+
+            <!-- App Grid -->
+            <div class="app-grid">
+                <div class="app-icon-wrapper" onclick="openApp('messages', this)">
+                    <div class="app-icon bg-gradient-green">
+                        <i data-lucide="message-circle" size="32"></i>
+                    </div>
+                    <span class="app-label">Messages</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('photos', this)">
+                    <div class="app-icon bg-gradient-blue">
+                        <i data-lucide="image" size="32"></i>
+                    </div>
+                    <span class="app-label">Photos</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('calendar', this)">
+                    <div class="app-icon bg-white text-red-500">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[10px] font-bold uppercase -mb-1">Mon</span>
+                            <span class="text-2xl font-semibold">12</span>
+                        </div>
+                    </div>
+                    <span class="app-label">Calendar</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('settings', this)">
+                    <div class="app-icon bg-gray-400">
+                        <i data-lucide="settings" size="32"></i>
+                    </div>
+                    <span class="app-label">Settings</span>
+                </div>
+
+                <div class="app-icon-wrapper" onclick="openApp('weather', this)">
+                    <div class="app-icon bg-gradient-indigo">
+                        <i data-lucide="cloud-sun" size="32"></i>
+                    </div>
+                    <span class="app-label">Weather</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('notes', this)">
+                    <div class="app-icon bg-gradient-orange">
+                        <i data-lucide="file-text" size="32"></i>
+                    </div>
+                    <span class="app-label">Notes</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('music', this)">
+                    <div class="app-icon bg-gradient-pink">
+                        <i data-lucide="music" size="32"></i>
+                    </div>
+                    <span class="app-label">Music</span>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('wallet', this)">
+                    <div class="app-icon bg-gradient-purple">
+                        <i data-lucide="wallet" size="32"></i>
+                    </div>
+                    <span class="app-label">Wallet</span>
+                </div>
+            </div>
+
+            <!-- Dock -->
+            <div class="dock">
+                <div class="app-icon-wrapper" onclick="openApp('phone', this)">
+                    <div class="app-icon bg-gradient-green">
+                        <i data-lucide="phone" size="32"></i>
+                    </div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('safari', this)">
+                    <div class="app-icon bg-white text-blue-500">
+                        <i data-lucide="compass" size="32"></i>
+                    </div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('mail', this)">
+                    <div class="app-icon bg-gradient-blue">
+                        <i data-lucide="mail" size="32"></i>
+                    </div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('camera', this)">
+                    <div class="app-icon bg-gray-300 text-gray-800">
+                        <i data-lucide="camera" size="32"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+        </div>
+
+        <!-- App Windows (Templates) -->
+        <div id="appContainer"></div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Update Clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        let currentActiveApp = null;
+
+        const appData = {
+            'messages': { title: 'Messages', color: 'bg-white', icon: 'message-circle', accent: 'text-green-600' },
+            'photos': { title: 'Photos', color: 'bg-white', icon: 'image', accent: 'text-blue-600' },
+            'calendar': { title: 'Calendar', color: 'bg-white', icon: 'calendar', accent: 'text-red-600' },
+            'settings': { title: 'Settings', color: 'bg-gray-100', icon: 'settings', accent: 'text-gray-600' },
+            'weather': { title: 'Weather', color: 'bg-gradient-to-b from-blue-400 to-blue-600', icon: 'cloud-sun', accent: 'text-white' },
+            'notes': { title: 'Notes', color: 'bg-yellow-50', icon: 'file-text', accent: 'text-yellow-600' },
+            'music': { title: 'Music', color: 'bg-white', icon: 'music', accent: 'text-pink-600' },
+            'wallet': { title: 'Wallet', color: 'bg-black', icon: 'wallet', accent: 'text-white' },
+            'phone': { title: 'Phone', color: 'bg-white', icon: 'phone', accent: 'text-green-600' },
+            'safari': { title: 'Safari', color: 'bg-white', icon: 'compass', accent: 'text-blue-600' },
+            'mail': { title: 'Mail', color: 'bg-white', icon: 'mail', accent: 'text-blue-600' },
+            'camera': { title: 'Camera', color: 'bg-black', icon: 'camera', accent: 'text-white' }
+        };
+
+        function getAppContent(appId, data) {
+            let content = `
+                <div class="app-window-header mt-8">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center ${data.accent} bg-opacity-10 bg-current">
+                        <i data-lucide="${data.icon}" size="20"></i>
+                    </div>
+                    <h1 class="text-xl font-bold ${data.accent === 'text-white' ? 'text-white' : 'text-gray-900'}">${data.title}</h1>
+                </div>
+            `;
+
+            if (appId === 'messages') {
+                content += `
+                    <div class="flex flex-col gap-3 mt-4">
+                        <div class="message-bubble bubble-received">Hey! Did you see those animations?</div>
+                        <div class="message-bubble bubble-sent">Yeah! They look super smooth!</div>
+                        <div class="message-bubble bubble-received">Wait till you see the "Messages" app!</div>
+                        <div class="message-bubble bubble-sent">It's already amazing. 🚀</div>
+                    </div>
+                `;
+            } else if (appId === 'weather') {
+                content += `
+                    <div class="flex flex-col items-center mt-10 gap-2">
+                        <span class="text-7xl font-light text-white">24°</span>
+                        <span class="text-xl text-white/80">Partly Cloudy</span>
+                        <div class="flex gap-6 mt-12 text-white/90">
+                            <div class="flex flex-col items-center"><span class="text-xs uppercase opacity-60">Mon</span><i data-lucide="sun" class="my-2" size="20"></i><span class="font-bold">25°</span></div>
+                            <div class="flex flex-col items-center"><span class="text-xs uppercase opacity-60">Tue</span><i data-lucide="cloud-rain" class="my-2" size="20"></i><span class="font-bold">21°</span></div>
+                            <div class="flex flex-col items-center"><span class="text-xs uppercase opacity-60">Wed</span><i data-lucide="cloud" class="my-2" size="20"></i><span class="font-bold">23°</span></div>
+                        </div>
+                    </div>
+                `;
+            } else if (appId === 'photos') {
+                content += `
+                    <div class="grid grid-cols-3 gap-2 mt-4">
+                        ${Array(12).fill(0).map((_, i) => `<div class="aspect-square bg-gray-200 rounded-md overflow-hidden"><img src="https://picsum.photos/200?random=${i}" class="w-100 h-100 object-cover" /></div>`).join('')}
+                    </div>
+                `;
+            } else {
+                content += `
+                    <div class="mt-4 space-y-4">
+                        <div class="h-32 rounded-2xl bg-gray-100 animate-pulse"></div>
+                        <div class="h-12 rounded-xl bg-gray-100 animate-pulse"></div>
+                        <div class="h-12 rounded-xl bg-gray-100 animate-pulse"></div>
+                    </div>
+                `;
+            }
+            return content;
+        }
+
+        function openApp(appId, element) {
+            const data = appData[appId];
+            const rect = element.getBoundingClientRect();
+            const screenRect = document.getElementById('homeScreen').getBoundingClientRect();
+            
+            // Calculate relative position and scale for the animation
+            const centerX = rect.left + rect.width / 2 - screenRect.left;
+            const centerY = rect.top + rect.height / 2 - screenRect.top;
+            
+            // Create app window
+            let appWindow = document.getElementById(`app-${appId}`);
+            if (!appWindow) {
+                appWindow = document.createElement('div');
+                appWindow.id = `app-${appId}`;
+                appWindow.className = `app-window ${data.color}`;
+                appWindow.innerHTML = `
+                    <div class="app-content">
+                        ${getAppContent(appId, data)}
+                    </div>
+                    <div class="home-indicator" onclick="closeApp('${appId}')"></div>
+                `;
+                document.getElementById('appContainer').appendChild(appWindow);
+                lucide.createIcons();
+            }
+
+            // Set initial state for expansion (shrinking to icon size)
+            const scaleX = rect.width / screenRect.width;
+            const scaleY = rect.height / screenRect.height;
+            const transX = centerX - screenRect.width / 2;
+            const transY = centerY - screenRect.height / 2;
+
+            appWindow.style.transform = `translate(${transX}px, ${transY}px) scale(${scaleX}, ${scaleY})`;
+            appWindow.style.opacity = "0";
+            appWindow.style.borderRadius = "20px";
+            
+            // Trigger animation
+            setTimeout(() => {
+                appWindow.classList.add('active');
+                appWindow.style.opacity = "1";
+                appWindow.style.borderRadius = "48px";
+                currentActiveApp = appId;
+                
+                // Dim and scale home screen
+                const home = document.getElementById('homeScreen');
+                home.style.filter = 'blur(15px) brightness(0.6)';
+                home.style.transform = 'scale(0.85)';
+                home.style.opacity = '0.4';
+                home.style.transition = 'all 0.6s cubic-bezier(0.32, 0.72, 0, 1)';
+            }, 10);
+        }
+
+        function closeApp(appId) {
+            const appWindow = document.getElementById(`app-${appId}`);
+            if (!appWindow) return;
+
+            // Find the original icon to return to
+            const icons = document.querySelectorAll('.app-icon-wrapper');
+            let targetIcon = null;
+            icons.forEach(icon => {
+                const onClickAttr = icon.getAttribute('onclick');
+                if (onClickAttr && onClickAttr.includes(`'${appId}'`)) {
+                    targetIcon = icon;
+                }
+            });
+
+            if (targetIcon) {
+                const rect = targetIcon.getBoundingClientRect();
+                const screenRect = document.getElementById('homeScreen').getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2 - screenRect.left;
+                const centerY = rect.top + rect.height / 2 - screenRect.top;
+                
+                const scaleX = rect.width / screenRect.width;
+                const scaleY = rect.height / screenRect.height;
+                const transX = centerX - screenRect.width / 2;
+                const transY = centerY - screenRect.height / 2;
+
+                appWindow.style.transform = `translate(${transX}px, ${transY}px) scale(${scaleX}, ${scaleY})`;
+                appWindow.style.opacity = "0";
+                appWindow.style.borderRadius = "20px";
+            } else {
+                appWindow.style.transform = "scale(0.8) translateY(100px)";
+                appWindow.style.opacity = "0";
+            }
+            
+            appWindow.classList.remove('active');
+            
+            // Restore home screen
+            const home = document.getElementById('homeScreen');
+            home.style.filter = 'none';
+            home.style.transform = 'scale(1)';
+            home.style.opacity = '1';
+            
+            currentActiveApp = null;
+
+            // Clean up window after animation
+            setTimeout(() => {
+                if (!appWindow.classList.contains('active')) {
+                    appWindow.remove();
+                }
+            }, 600);
+        }
+
+        // Handle physical-like "Home" click (on the indicator)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && currentActiveApp) {
+                closeApp(currentActiveApp);
+            }
+        });
+    </script>
+</body>
+</html>

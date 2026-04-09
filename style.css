@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.phone-frame {
+    width: 375px;
+    height: 812px;
+    background: #000;
+    border-radius: 60px;
+    border: 12px solid #1e293b;
+    position: relative;
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.phone-screen {
+    width: 100%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover;
+    position: relative;
+    overflow: hidden;
+    border-radius: 48px;
+}
+
+.status-bar {
+    height: 44px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 100;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px 25px;
+    margin-top: 20px;
+}
+
+.app-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.app-icon-wrapper:active {
+    transform: scale(0.9);
+}
+
+.app-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.app-label {
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* App Window Styles */
+.app-window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 200;
+    border-radius: 48px;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: center;
+    transition: all 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 50px rgba(0,0,0,0.3);
+}
+
+.app-window.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translate(0, 0) !important;
+    border-radius: 48px;
+}
+
+.app-content {
+    flex: 1;
+    padding: 60px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.app-window-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.message-bubble {
+    padding: 10px 14px;
+    border-radius: 18px;
+    max-width: 80%;
+    font-size: 14px;
+}
+
+.bubble-sent {
+    background: #3b82f6;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.bubble-received {
+    background: #e5e7eb;
+    color: black;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    z-index: 300;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.app-window .home-indicator {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Glassmorphism for Dock */
+.dock {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 335px;
+    height: 84px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 50;
+}
+
+/* Dynamic App Backgrounds */
+.bg-gradient-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.bg-gradient-green { background: linear-gradient(135deg, #10b981, #047857); }
+.bg-gradient-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.bg-gradient-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.bg-gradient-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+.bg-gradient-red { background: linear-gradient(135deg, #ef4444, #b91d1d); }
+.bg-gradient-indigo { background: linear-gradient(135deg, #6366f1, #4338ca); }
+
+/* Animation Keyframes */
+@keyframes app-entrance {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.app-icon-wrapper {
+    animation: app-entrance 0.5s cubic-bezier(0.32, 0.72, 0, 1) backwards;
+}
+
+.app-icon-wrapper:nth-child(1) { animation-delay: 0.1s; }
+.app-icon-wrapper:nth-child(2) { animation-delay: 0.15s; }
+.app-icon-wrapper:nth-child(3) { animation-delay: 0.2s; }
+.app-icon-wrapper:nth-child(4) { animation-delay: 0.25s; }
+.app-icon-wrapper:nth-child(5) { animation-delay: 0.3s; }
+.app-icon-wrapper:nth-child(6) { animation-delay: 0.35s; }
+.app-icon-wrapper:nth-child(7) { animation-delay: 0.4s; }
+.app-icon-wrapper:nth-child(8) { animation-delay: 0.45s; }
+
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+    100% { transform: rotate(0deg); }
+}
